@@ -1,0 +1,16 @@
+/* FIX layout — remove Vite defaults */
+#root {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+/* Remove Vite demo styles */
+.logo,
+.logo:hover,
+.logo.react:hover,
+.card,
+.read-the-docs {
+  all: unset;
+}
