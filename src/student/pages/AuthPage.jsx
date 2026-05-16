@@ -207,7 +207,7 @@ export default function AuthPage() {
   const [isLoading, setIsLoading] = useState(false);
   
   // API Base URL
-  const API_BASE_URL = 'http://localhost:5000/api/auth';
+  const API_BASE_URL = 'https://msu-tcto-backend-nta0.onrender.com/api/auth';
   
   // FORGOT PASSWORD STATES (EMAIL ONLY - FACEBOOK STYLE)
   const [showForgotPassword, setShowForgotPassword] = useState(false);

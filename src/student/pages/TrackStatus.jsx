@@ -66,8 +66,8 @@ export default function TrackStatus() {
   const [contactNumber, setContactNumber] = useState("(068) 123-4567")
   const [locationInfo, setLocationInfo] = useState("Registrar Office, MSU-TCTO, Sanga-Sanga, Bongao Tawi-Tawi")
 
-  const API_BASE_URL = 'http://localhost:5000/api/requests'
-  const ADMIN_API_URL = 'http://localhost:5000/api'
+  const API_BASE_URL = 'https://msu-tcto-backend-nta0.onrender.com/api/requests'
+  const ADMIN_API_URL = 'https://msu-tcto-backend-nta0.onrender.com/api'
 
   // 🆕 FETCH PUBLIC SETTINGS
   useEffect(() => {
