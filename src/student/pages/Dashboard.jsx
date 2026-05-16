@@ -32,26 +32,40 @@ export default function Dashboard() {
   const [error, setError] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   
+  // 🆕 DYNAMIC SETTINGS FROM DATABASE
+  const [avgProcessingTime, setAvgProcessingTime] = useState(10);
+  const [officeHours, setOfficeHours] = useState("8:00 AM – 4:45 PM");
+  
   const API_BASE_URL = 'http://localhost:5000/api';
 
-  // Average time per student in minutes (Adjustment factor for your capstone)
-  const AVG_PROCESSING_TIME = 10;
+  // 🆕 FETCH PUBLIC SETTINGS
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/public/settings`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.avg_processing_time) setAvgProcessingTime(data.avg_processing_time);
+          if (data.office_hours) setOfficeHours(data.office_hours);
+        }
+      } catch (err) {
+        console.warn('Using default settings');
+      }
+    };
+    fetchSettings();
+  }, []);
 
-  /* =====================================================
-      COMPUTED PROPERTIES (Wait Time Logic)
-  ===================================================== */
+  // Wait Time Logic - 🆕 gumagamit ng dynamic avgProcessingTime
   const estimatedWait = useMemo(() => {
-    const totalMinutes = queueData.pending_count * AVG_PROCESSING_TIME;
+    const totalMinutes = queueData.pending_count * avgProcessingTime;
     if (totalMinutes === 0) return "No waiting time";
     if (totalMinutes < 60) return `${totalMinutes} mins`;
     const hrs = Math.floor(totalMinutes / 60);
     const mins = totalMinutes % 60;
     return mins > 0 ? `${hrs}h ${mins}m` : `${hrs}h`;
-  }, [queueData.pending_count]);
+  }, [queueData.pending_count, avgProcessingTime]);
 
-  /* =====================================================
-      DATA FETCHING
-  ===================================================== */
+  // DATA FETCHING
   useEffect(() => {
     const savedData = localStorage.getItem("currentUser");
     if (savedData) {
@@ -100,7 +114,7 @@ export default function Dashboard() {
       setLoading(false);
       setIsRefreshing(false);
     }
-  }, [API_BASE_URL]);
+  }, []);
 
   useEffect(() => {
     fetchQueueData();
@@ -108,9 +122,6 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, [fetchQueueData]);
 
-  /* =====================================================
-      HANDLERS
-  ===================================================== */
   const formatStudentId = (id) => {
     const clean = id.toString().replace(/[-\s]/g, '');
     return clean.length >= 7 ? `${clean.substring(0, 2)}-${clean.substring(2, 7)}` : id;
@@ -119,12 +130,12 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center py-8 px-4 font-sans">
       
-      {/* Header / Welcome Section */}
+      {/* Header */}
       <section className="w-full max-w-4xl bg-white rounded-2xl p-8 mb-6 shadow-sm border border-slate-200">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
           <div>
             <h2 className="text-2xl font-bold text-slate-800">
-              Welcome, <span className="text-[#7A0019]">{userData.name}</span>!
+              Welcome, <span className="text-[#5F0231]">{userData.name}</span>!
             </h2>
             <p className="text-slate-500 font-medium">
               ID Number: <span className="font-mono text-slate-700">{formatStudentId(userData.id_number)}</span>
@@ -172,7 +183,6 @@ export default function Dashboard() {
             ) : (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {/* Current Serving */}
                   <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 text-center relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:scale-125 transition-transform"><FaUsers size={60} /></div>
                     <p className="text-[#7A0019] text-xs font-black uppercase tracking-widest mb-2">Now Serving</p>
@@ -181,7 +191,6 @@ export default function Dashboard() {
                     </div>
                   </div>
                   
-                  {/* Last Issued */}
                   <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 text-center relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:scale-125 transition-transform"><FaTicketAlt size={60} /></div>
                     <p className="text-[#0038A8] text-xs font-black uppercase tracking-widest mb-2">Last Issued</p>
@@ -191,7 +200,6 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* Wait Time Info Bar */}
                 <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
@@ -238,7 +246,7 @@ export default function Dashboard() {
         </button>
       </section>
 
-      {/* Institutional Info Section */}
+      {/* 🆕 Office Information - DYNAMIC */}
       <section className="w-full max-w-4xl bg-white rounded-2xl p-8 shadow-sm border border-slate-200">
         <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
           <div className="w-1.5 h-6 bg-[#7A0019] rounded-full"></div>
@@ -249,7 +257,7 @@ export default function Dashboard() {
             <div className="p-3 bg-slate-100 rounded-lg text-slate-600"><FaClock /></div>
             <div>
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Office Hours</p>
-              <p className="text-sm font-bold text-slate-700">8:00 AM – 4:45 PM</p>
+              <p className="text-sm font-bold text-slate-700">{officeHours}</p>
               <p className="text-xs text-slate-500">Monday to Friday</p>
             </div>
           </div>

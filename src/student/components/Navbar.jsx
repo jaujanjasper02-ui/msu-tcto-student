@@ -44,13 +44,13 @@ export default function Navbar() {
             )}
 
             <img
-              src="/msu_logo.png"
+              src="/Msu-Tcto_Logo.jpg"
               alt="MSU Logo"
               className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0 shadow-sm border border-slate-100"
             />
 
             <div className="flex-1">
-              <h1 className="text-base sm:text-xl font-black text-[#7A0019] leading-tight tracking-tight">
+              <h1 className="text-base sm:text-xl font-black text-[#5F0231] leading-tight tracking-tight">
                 MSU-TCTO
               </h1>
               <p className="text-[9px] sm:text-xs text-slate-500 font-medium uppercase tracking-wider leading-tight">
@@ -89,7 +89,7 @@ export default function Navbar() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-[100] animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
             {/* Header with MSU Gradient */}
-            <div className="bg-gradient-to-r from-[#7A0019] to-[#0038A8] px-6 py-4">
+            <div className="bg-gradient-to-r from-[#5f0231] to-[#0038A8] px-6 py-4">
               <div className="flex items-center justify-center">
                 <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                   <FaSignOutAlt className="text-white text-xl" />

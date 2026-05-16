@@ -10,7 +10,7 @@ export default function LandingPage() {
       {/* Logo */}
       <div className="text-center mb-6">
         <img 
-          src="/msu_logo.png" 
+          src="/Msu-Tcto_Logo.jpg" 
           alt="MSU Logo" 
           className="w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 mx-auto mb-4"
         />

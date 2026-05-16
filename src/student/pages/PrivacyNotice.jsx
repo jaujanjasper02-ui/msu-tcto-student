@@ -63,11 +63,11 @@ export default function PrivacyNotice() {
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-600" />
-                  Process document requests systematically
+                  Process document requests in FIFO order
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-600" />
-                  Update request status (Pending, Approved, Processing, Ready, Claimed, Rejected)
+                  Update request status (Pending, Processing, Ready, Claimed, Rejected)
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-600" />
@@ -95,7 +95,7 @@ export default function PrivacyNotice() {
               <ul className="space-y-2 text-sm text-gray-700">
                 <li className="flex items-center gap-2">
                   <FileText className="w-4 h-4 text-purple-600" />
-                  TOR, Diploma, CAV, and other academic records
+                  TOR, CAV, Certifications, and other academic records
                 </li>
                 <li className="flex items-center gap-2">
                   <FileText className="w-4 h-4 text-purple-600" />
@@ -164,7 +164,7 @@ export default function PrivacyNotice() {
                 </li>
                 <li className="flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4 text-yellow-600" />
-                  Request history: 5 years (CHED requirement)
+                  Request history: As required by university policy
                 </li>
                 <li className="flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4 text-yellow-600" />
@@ -194,7 +194,7 @@ export default function PrivacyNotice() {
               { right: "Right to be Informed", desc: "Know how your data is collected and used" },
               { right: "Right to Access", desc: "Request copies of your personal data" },
               { right: "Right to Rectify", desc: "Correct inaccurate or incomplete information" },
-              { right: "Right to Erase", desc: "Request deletion of your data (subject to CHED retention)" },
+              { right: "Right to Erase", desc: "Request deletion of your data (subject to retention policies)" },
               { right: "Right to Object", desc: "Object to data processing for specific purposes" },
               { right: "Right to Data Portability", desc: "Receive your data in electronic format" },
               { right: "Right to Complain", desc: "File complaints with National Privacy Commission" },
@@ -221,7 +221,7 @@ export default function PrivacyNotice() {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         
-        {/* Header - Updated title */}
+        {/* Header */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-[#8B0000] to-[#0056A6] rounded-full mb-4 shadow-lg">
             <Shield className="w-10 h-10 text-white" />
@@ -230,7 +230,7 @@ export default function PrivacyNotice() {
             Privacy Notice
           </h1>
           <p className="text-gray-600 text-lg">MSU-TCTO Registrar Queuing System with Notifications</p>
-          </div>
+        </div>
 
         {/* Privacy Sections */}
         <div className="space-y-6">
@@ -267,7 +267,7 @@ export default function PrivacyNotice() {
           ))}
         </div>
 
-        {/* Contact Information - Removed SMS */}
+        {/* Contact Information */}
         <div className="mt-12 bg-gradient-to-r from-[#8B0000] to-[#0056A6] rounded-xl shadow-lg overflow-hidden">
           <div className="p-8 text-white">
             <h3 className="text-2xl font-bold mb-6">Contact for Privacy Concerns</h3>
@@ -278,7 +278,7 @@ export default function PrivacyNotice() {
                     <Phone className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="font-semibold text-lg">Phone Numbers</p>
+                    <p className="font-semibold text-lg">Phone Number</p>
                     <p className="text-white/80 mt-2">
                       (068) 268-4231
                     </p>
@@ -304,20 +304,9 @@ export default function PrivacyNotice() {
                     <Mail className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="font-semibold text-lg">Email Addresses</p>
+                    <p className="font-semibold text-lg">Email Address</p>
                     <p className="text-white/80 mt-2">
-                      <a 
-                        href="mailto:registraroffice@msutcto.edu.ph" 
-                        className="text-white hover:text-white/90 transition-colors underline block"
-                      >
-                        registraroffice@msutcto.edu.ph
-                      </a>
-                      <a 
-                        href="mailto:registrar@msutcto.edu.ph" 
-                        className="text-white hover:text-white/90 transition-colors underline block mt-1"
-                      >
-                        registrar@msutcto.edu.ph
-                      </a>
+                      registrar@msutcto.edu.ph
                     </p>
                   </div>
                 </div>
@@ -329,10 +318,7 @@ export default function PrivacyNotice() {
                     <p className="font-semibold text-lg">Data Privacy Officer</p>
                     <p className="text-white/80 mt-2">
                       MSU-TCTO Data Protection Office<br/>
-                      Office of the Campus Registrar<br/>
-                      <a href="mailto:dpo@msutcto.edu.ph" className="text-white/80 hover:text-white underline">
-                        dpo@msutcto.edu.ph
-                      </a>
+                      Office of the Campus Registrar
                     </p>
                   </div>
                 </div>

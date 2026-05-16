@@ -21,7 +21,7 @@ import {
 import { useParams, useNavigate, Link } from 'react-router-dom'
 
 // =============================================
-// DOCUMENT PRICE LIST
+// DOCUMENT PRICE LIST (Fallback)
 // =============================================
 const DOCUMENT_PRICES = {
   'Transcript of Records (TOR)': 50.00,
@@ -61,8 +61,34 @@ export default function TrackStatus() {
     total: 0
   })
 
-  const API_BASE_URL = 'http://localhost:5000/api/requests'
+  // 🆕 DYNAMIC SETTINGS FROM DATABASE
+  const [officeHours, setOfficeHours] = useState("Monday-Friday, 8:00 AM - 4:45 PM")
+  const [contactNumber, setContactNumber] = useState("(068) 123-4567")
+  const [locationInfo, setLocationInfo] = useState("Registrar Office, MSU-TCTO, Sanga-Sanga, Bongao Tawi-Tawi")
 
+  const API_BASE_URL = 'http://localhost:5000/api/requests'
+  const ADMIN_API_URL = 'http://localhost:5000/api'
+
+  // 🆕 FETCH PUBLIC SETTINGS
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch(`${ADMIN_API_URL}/admin/settings/public`);
+        if (response.ok) {
+          const data = await response.json()
+          if (data.office_hours) setOfficeHours(data.office_hours)
+          // Kung may contact_email o iba pang settings, maaari ring i-set dito
+        }
+      } catch (err) {
+        console.warn('Using default settings')
+      }
+    }
+    fetchSettings()
+  }, [])
+
+  // =============================================
+  // HELPER FUNCTIONS
+  // =============================================
   const calculateAmount = (docType, copies = 1) => {
     const price = DOCUMENT_PRICES[docType] || DEFAULT_PRICE
     return (price * copies).toFixed(2)
@@ -175,9 +201,9 @@ export default function TrackStatus() {
         rejectedReason: data.rejected_reason,
         queue_number: data.queue_number,
         officerInCharge: 'Registrar Office',
-        contact: '(068) 123-4567',
-        location: 'Registrar Office, MSU-TCTO, Sanga-Sanga, Bongao Tawi-Tawi',
-        officeHours: 'Monday-Friday, 8:00 AM - 4:45 PM',
+        contact: contactNumber,
+        location: locationInfo,
+        officeHours: officeHours,
         requirements: ['Valid ID', 'Official Receipt from Cashier', 'Authorization Letter (if representative)']
       }
       setRequestData(transformedData)
@@ -282,7 +308,6 @@ export default function TrackStatus() {
             <span>{request.requestDate}</span>
           </div>
         </div>
-        {/* QUEUE NUMBER on card */}
         {request.queue_number && (
           <div className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-2">
             <span className="text-xs text-gray-500">Queue #:</span>
@@ -300,11 +325,12 @@ export default function TrackStatus() {
       <div className="w-full max-w-4xl mx-auto">
         {id && <button onClick={clearSearch} className="mb-4 flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition"><FaArrowLeft className="text-sm" /><span>Back to All Requests</span></button>}
         <div className="text-center mb-6">
-  <h1 className="text-2xl md:text-3xl font-bold mb-2 bg-gradient-to-r from-[#7A0019] to-[#0038A8] bg-clip-text text-transparent">
-    Track Your Requests
-  </h1>
-  <p className="text-gray-600">{requestData ? '' : 'View and track all your document requests'}</p>
-</div>
+          <h1 className="text-2xl md:text-3xl font-bold mb-2 bg-gradient-to-r from-[#7A0019] to-[#0038A8] bg-clip-text text-transparent">
+            Track Your Requests
+          </h1>
+          <p className="text-gray-600">{requestData ? '' : 'View and track all your document requests'}</p>
+        </div>
+        
         {!requestData && !id && !loading && userRequests.length > 0 && (
           <div className="grid grid-cols-5 gap-2 mb-4 text-center text-xs">
             <div className="bg-yellow-50 p-2 rounded-lg"><span className="font-bold text-yellow-800">{stats.pending}</span><p className="text-yellow-600">Pending</p></div>
@@ -409,7 +435,6 @@ export default function TrackStatus() {
             </div>
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {/* 🆕 QUEUE NUMBER CARD - IMPORTANT */}
               {requestData.queue_number && (
                 <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-200 shadow-sm">
                   <p className="text-xs text-gray-500 mb-1">Queue Position</p>
@@ -417,7 +442,6 @@ export default function TrackStatus() {
                  </div>
               )}
               
-              {/* Amount Card */}
               <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
                 <p className="text-xs text-gray-500 mb-1">Amount</p>
                 <p className="font-bold text-[#7A0019] text-lg">₱{requestData.amount}</p>
@@ -491,6 +515,7 @@ export default function TrackStatus() {
               </div>
             )}
             
+            {/* 🆕 PICKUP INFORMATION - WITH DYNAMIC OFFICE HOURS */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"><FaBuilding className="text-[#7A0019]" /> Pickup Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -499,14 +524,14 @@ export default function TrackStatus() {
                     <FaMapMarkerAlt className="text-gray-500 mt-1 flex-shrink-0" />
                     <div>
                       <p className="text-sm font-medium text-gray-700">Location</p>
-                      <p className="text-sm text-gray-600">{requestData.location}</p>
+                      <p className="text-sm text-gray-600">{locationInfo}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <FaClock className="text-gray-500 mt-1 flex-shrink-0" />
                     <div>
                       <p className="text-sm font-medium text-gray-700">Office Hours</p>
-                      <p className="text-sm text-gray-600">{requestData.officeHours}</p>
+                      <p className="text-sm text-gray-600">{officeHours}</p>
                     </div>
                   </div>
                 </div>
@@ -515,7 +540,7 @@ export default function TrackStatus() {
                     <FaPhone className="text-gray-500 mt-1 flex-shrink-0" />
                     <div>
                       <p className="text-sm font-medium text-gray-700">Contact</p>
-                      <p className="text-sm text-gray-600">{requestData.contact}</p>
+                      <p className="text-sm text-gray-600">{contactNumber}</p>
                     </div>
                   </div>
                 </div>
@@ -523,7 +548,9 @@ export default function TrackStatus() {
               <div className="mt-4 p-3 bg-gray-50 rounded-lg">
                 <p className="text-sm font-medium text-gray-700 mb-2">Required for Pickup:</p>
                 <ul className="list-disc list-inside space-y-1">
-                  {requestData.requirements.map((req, idx) => <li key={idx} className="text-sm text-gray-600">{req}</li>)}
+                  <li className="text-sm text-gray-600">Valid ID</li>
+                  <li className="text-sm text-gray-600">Official Receipt from Cashier</li>
+                  <li className="text-sm text-gray-600">Authorization Letter (if representative)</li>
                 </ul>
               </div>
             </div>

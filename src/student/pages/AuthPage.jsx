@@ -17,48 +17,59 @@ import { useNavigate, Link } from "react-router-dom";
    MSU-TCTO DEPARTMENTS
 ================================ */
 const departments = [
-  { code: "COF", name: "(COF) College of Fisheries" },
-  { code: "COED", name: "(COED) College of Education" },
-  { code: "CAS", name: "(CAS) College of Arts and Sciences" },
-  { code: "CCS", name: "(CCS) College of Computer Studies / IICT" },
-  { code: "CIAS", name: "(CIAS) College of Islamic and Arabic Studies" },
-  { code: "IOES", name: "(IOES) Institute of Oceanography & Environmental Science" },
+  { code: "CASS", name: "CASS - College of Arts and Social Sciences" },
+  { code: "COED", name: "COED - College of Education" },
+  { code: "CIAS", name: "CIAS - College of Islamic Arts and Studies" },
+  { code: "COFEST", name: "COFEST - Fisheries, Oceanography, Envi. Sci. & Tech." },
+  { code: "CCS", name: "CCS - College of Computer Studies" },
+  { code: "CBAM", name: "CBAM - Business, Accountancy, and Management" },
+  { code: "CMS", name: "CMS - College of Mathematical Sciences" },
+  { code: "COL", name: "COL - College of Law" },
 ];
 
 /* =====================================================
    COURSE → DEPARTMENT MAPPING
 ===================================================== */
 const courseDepartmentMap = {
-  "Bachelor of Arts in History": "CAS",
-  "Bachelor of Arts in Political Science": "CAS",
-  "Bachelor of Arts in English Language": "CAS",
-  "Bachelor of Arts in Literary and Cultural Studies": "CAS",
-  "Bachelor of Public Administration": "CAS",
-  "Bachelor of Science in Business Administration": "CAS",
-  "Bachelor of Science in Mathematics": "CAS",
-  "Bachelor of Science in Statistics": "CAS",
-  "Professional Diploma in Physical Education": "CAS",
-  "Master in Public Administration": "CAS",
-  "Master of Arts in English Language Teaching": "CAS",
-  "Diploma in Office Management": "CAS",
-  "Master of Science in Teaching Mathematics": "CAS",
-  "Master of Science in Mathematics": "CAS",
+  // CASS (College of Arts and Social Sciences)
+  "Bachelor of Arts in History": "CASS",
+  "Bachelor of Arts in Political Science": "CASS",
+  "Bachelor of Arts in English Language": "CASS",
+  "Bachelor of Arts in Literary and Cultural Studies": "CASS",
+  "Bachelor of Public Administration": "CASS",
+  "Bachelor of Science in Business Administration": "CASS",
+  "Bachelor of Science in Mathematics": "CASS",
+  "Bachelor of Science in Statistics": "CASS",
+  "Professional Diploma in Physical Education": "CASS",
+  "Master in Public Administration": "CASS",
+  "Master of Arts in English Language Teaching": "CASS",
+  "Diploma in Office Management": "CASS",
+  "Master of Science in Teaching Mathematics": "CASS",
+  "Master of Science in Mathematics": "CASS",
+  
+  // COED (College of Education)
   "Bachelor of Early Childhood Education": "COED",
   "Bachelor of Elementary Education": "COED",
   "Bachelor of Secondary Education": "COED",
   "Master of Arts in Education major in Educational Management": "COED",
   "Master of Science in Education Major in General Science": "COED",
   "PhD in Education Management": "COED",
+  
+  // CIAS (College of Islamic Arts and Studies)
   "Bachelor of Arts in Islamic Studies Major in Sharia": "CIAS",
   "Bachelor of Science in Teaching Arabic": "CIAS",
   "Master of Arts in Islamic Studies Education": "CIAS",
-  "Diploma in Fisheries Technology": "COF",
-  "Bachelor of Science in Fisheries": "COF",
-  "Bachelor of Science in Food Technology": "COF",
-  "Master of Science in Aquaculture": "COF",
-  "Bachelor of Science in Marine Biology": "IOES",
-  "Bachelor of Science in Environmental Science": "IOES",
-  "Master of Science in Marine Biology": "IOES",
+  
+  // COFEST (College of Fisheries, Oceanography, Environmental Science, and Technology)
+  "Diploma in Fisheries Technology": "COFEST",
+  "Bachelor of Science in Fisheries": "COFEST",
+  "Bachelor of Science in Food Technology": "COFEST",
+  "Master of Science in Aquaculture": "COFEST",
+  "Bachelor of Science in Marine Biology": "COFEST",
+  "Bachelor of Science in Environmental Science": "COFEST",
+  "Master of Science in Marine Biology": "COFEST",
+  
+  // CCS (College of Computer Studies)
   "Bachelor of Science in Information Technology": "CCS",
   "Bachelor of Science in Computer Applications": "CCS",
 };
@@ -67,7 +78,7 @@ const courseDepartmentMap = {
    DEPARTMENT → COURSES MAPPING
 ===================================================== */
 const departmentCourseMap = {
-  CAS: [
+  CASS: [
     "Bachelor of Arts in History",
     "Bachelor of Arts in Political Science",
     "Bachelor of Arts in English Language",
@@ -96,13 +107,11 @@ const departmentCourseMap = {
     "Bachelor of Science in Teaching Arabic",
     "Master of Arts in Islamic Studies Education",
   ],
-  COF: [
+  COFEST: [
     "Diploma in Fisheries Technology",
     "Bachelor of Science in Fisheries",
     "Bachelor of Science in Food Technology",
     "Master of Science in Aquaculture",
-  ],
-  IOES: [
     "Bachelor of Science in Marine Biology",
     "Bachelor of Science in Environmental Science",
     "Master of Science in Marine Biology",
@@ -111,6 +120,10 @@ const departmentCourseMap = {
     "Bachelor of Science in Information Technology",
     "Bachelor of Science in Computer Applications",
   ],
+  // Para sa mga department na walang courses pa o nasa future:
+  CBAM: [],
+  CMS: [],
+  COL: [],
 };
 
 /* =====================================================
@@ -957,7 +970,7 @@ export default function AuthPage() {
     "flex-1 py-2 px-3 bg-[#fafafa] rounded-r-lg outline-none text-sm border border-gray-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 disabled:opacity-50";
 
   const selectClass =
-    "flex-1 py-2 px-3 bg-[#fafafa] rounded-r-lg outline-none text-sm border border-gray-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 max-h-40 overflow-y-auto disabled:opacity-50";
+  "flex-1 py-2 px-3 bg-[#fafafa] rounded-r-lg outline-none text-sm border border-gray-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 max-h-40 overflow-y-auto disabled:opacity-50 truncate";
 
   const iconClass = "text-gray-400 p-2 bg-[#fafafa] rounded-l-lg";
 
@@ -965,7 +978,7 @@ export default function AuthPage() {
     <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-b from-white to-blue-50 text-gray-800 py-8 px-4">
       {/* HEADER */}
       <div className="w-full max-w-md text-center">
-        <img src="/msu_logo.png" alt="MSU Logo" className="w-24 h-24 mx-auto mb-3" />
+        <img src="/Msu-Tcto_Logo.jpg" alt="MSU Logo" className="w-24 h-24 mx-auto mb-3" />
         <h1 className="text-3xl font-extrabold bg-gradient-to-r from-[#7A0019] to-[#0038A8] bg-clip-text text-transparent">MSU-TCTO REQUEST</h1>
         <p className="text-blue-900 font-medium mb-6">Registrar Queuing System with Notifications</p>
       </div>
