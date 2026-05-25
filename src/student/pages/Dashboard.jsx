@@ -36,7 +36,7 @@ export default function Dashboard() {
   const [avgProcessingTime, setAvgProcessingTime] = useState(10);
   const [officeHours, setOfficeHours] = useState("8:00 AM – 4:45 PM");
   
-  const API_BASE_URL = 'https://msu-tcto-backend-nta0.onrender.com/api';
+  const API_BASE_URL = 'https://msu-tcto-backend-oh2j.onrender.com/api';
 
   // 🆕 FETCH PUBLIC SETTINGS
   useEffect(() => {

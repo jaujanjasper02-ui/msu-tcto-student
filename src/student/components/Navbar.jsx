@@ -25,6 +25,11 @@ export default function Navbar() {
     navigate("/");
   };
 
+  // 🆕 Handle logo click - navigate to dashboard
+  const handleLogoClick = () => {
+    navigate("/dashboard");
+  };
+
   return (
     <>
       {/* Header */}
@@ -43,20 +48,33 @@ export default function Navbar() {
               </button>
             )}
 
-            <img
-              src="/Msu-Tcto_Logo.jpg"
-              alt="MSU Logo"
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0 shadow-sm border border-slate-100"
-            />
+            {/* 🆕 Logo - Made clickable to navigate to dashboard */}
+            <button
+              onClick={handleLogoClick}
+              className="flex-shrink-0 transition-transform hover:scale-105 active:scale-95 focus:outline-none"
+              aria-label="Go to Dashboard"
+              title="Go to Dashboard"
+            >
+              <img
+                src="/Msu-Tcto_Logo.jpg"
+                alt="MSU Logo"
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover shadow-sm border border-slate-100 cursor-pointer"
+              />
+            </button>
 
-            <div className="flex-1">
-              <h1 className="text-base sm:text-xl font-black text-[#5F0231] leading-tight tracking-tight">
+            {/* 🆕 Title section - Also clickable to navigate to dashboard */}
+            <button
+              onClick={handleLogoClick}
+              className="flex-1 text-left focus:outline-none"
+              aria-label="Go to Dashboard"
+            >
+              <h1 className="text-base sm:text-xl font-black text-[#5F0231] leading-tight tracking-tight hover:text-[#7A0019] transition-colors">
                 MSU-TCTO
               </h1>
               <p className="text-[9px] sm:text-xs text-slate-500 font-medium uppercase tracking-wider leading-tight">
                 Registrar Queuing System with Notification
               </p>
-            </div>
+            </button>
           </div>
 
           {/* RIGHT: Profile & Logout */}

@@ -61,15 +61,15 @@ export default function TrackStatus() {
     total: 0
   })
 
-  // 🆕 DYNAMIC SETTINGS FROM DATABASE
+  // DYNAMIC SETTINGS FROM DATABASE
   const [officeHours, setOfficeHours] = useState("Monday-Friday, 8:00 AM - 4:45 PM")
   const [contactNumber, setContactNumber] = useState("(068) 123-4567")
   const [locationInfo, setLocationInfo] = useState("Registrar Office, MSU-TCTO, Sanga-Sanga, Bongao Tawi-Tawi")
 
-  const API_BASE_URL = 'https://msu-tcto-backend-nta0.onrender.com/api/requests'
-  const ADMIN_API_URL = 'https://msu-tcto-backend-nta0.onrender.com/api'
+  const API_BASE_URL = 'https://msu-tcto-backend-oh2j.onrender.com/api/requests'
+  const ADMIN_API_URL = 'https://msu-tcto-backend-oh2j.onrender.com/api'
 
-  // 🆕 FETCH PUBLIC SETTINGS
+  // FETCH PUBLIC SETTINGS
   useEffect(() => {
     const fetchSettings = async () => {
       try {
@@ -77,7 +77,6 @@ export default function TrackStatus() {
         if (response.ok) {
           const data = await response.json()
           if (data.office_hours) setOfficeHours(data.office_hours)
-          // Kung may contact_email o iba pang settings, maaari ring i-set dito
         }
       } catch (err) {
         console.warn('Using default settings')
@@ -132,6 +131,18 @@ export default function TrackStatus() {
     } catch (e) { return null; }
   }
 
+  // 🆕 Helper function to get sortable date from request
+  const getSortableDate = (req) => {
+    if (req.rawDate) return new Date(req.rawDate)
+    if (req.date_submitted) return new Date(req.date_submitted)
+    if (req.requestDate) {
+      // Try to parse the formatted date
+      const parsed = new Date(req.requestDate)
+      if (!isNaN(parsed)) return parsed
+    }
+    return new Date(0) // fallback to epoch if no date
+  }
+
   const fetchUserRequests = async () => {
     setLoading(true)
     setError('')
@@ -147,14 +158,25 @@ export default function TrackStatus() {
       })
       const data = await response.json()
       if (!response.ok) throw new Error(data.message || data.error || 'Failed to fetch requests')
-      const transformedRequests = data.requests.map(req => ({
+      
+      // 🆕 Transform requests with raw date for sorting
+      const transformedRequests = (data.requests || []).map(req => ({
         id: req.tracking_code,
         docType: req.document,
         requestDate: formatDate(req.date_submitted),
+        rawDate: req.date_submitted, // Keep raw date for sorting
         status: req.status,
         queue_number: req.queue_number
       }))
-      setUserRequests(transformedRequests)
+      
+      // 🆕 SORT: Newest first (descending order by date)
+      const sortedRequests = [...transformedRequests].sort((a, b) => {
+        const dateA = a.rawDate ? new Date(a.rawDate) : new Date(0)
+        const dateB = b.rawDate ? new Date(b.rawDate) : new Date(0)
+        return dateB - dateA // Descending: newer dates come first
+      })
+      
+      setUserRequests(sortedRequests)
       setStats(data.stats || { pending: 0, processing: 0, ready: 0, claimed: 0, rejected: 0, total: data.pagination?.total || 0 })
     } catch (err) {
       console.error('❌ Error fetching user requests:', err)
@@ -191,6 +213,7 @@ export default function TrackStatus() {
         orNumber: '—',
         copies: data.copies,
         requestDate: formatFullDate(data.date_sent) || data.date_sent,
+        rawDate: data.date_sent,
         processingTime: getProcessingTime(data.request_type),
         estimatedCompletion: formatFullDate(data.estimated_completion_date) || data.estimated_completion_date,
         processed_date: data.processed_date,
@@ -391,7 +414,16 @@ export default function TrackStatus() {
               <span className="text-sm text-gray-500">{userRequests.length} {userRequests.length === 1 ? 'request' : 'requests'}</span>
             </div>
             {userRequests.length > 0 ? (
-              <div>{userRequests.map(request => <RequestCard key={request.id} request={request} />)}</div>
+              <div>
+                {/* 🆕 Table header */}
+                <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-2 text-xs font-semibold text-gray-500 border-b border-gray-200 bg-gray-50 rounded-t-lg">
+                  <div className="col-span-5">Document</div>
+                  <div className="col-span-2 text-center">Status</div>
+                  <div className="col-span-2 text-center">Queue #</div>
+                  <div className="col-span-3 text-right">Date Submitted</div>
+                </div>
+                {userRequests.map(request => <RequestCard key={request.id} request={request} />)}
+              </div>
             ) : (
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
                 <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -515,7 +547,7 @@ export default function TrackStatus() {
               </div>
             )}
             
-            {/* 🆕 PICKUP INFORMATION - WITH DYNAMIC OFFICE HOURS */}
+            {/* PICKUP INFORMATION - WITH DYNAMIC OFFICE HOURS */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"><FaBuilding className="text-[#7A0019]" /> Pickup Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

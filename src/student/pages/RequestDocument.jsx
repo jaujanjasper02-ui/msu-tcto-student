@@ -37,15 +37,16 @@ export default function RequestDocument() {
   const [currentUser, setCurrentUser] = useState(null)
   const nav = useNavigate()
 
-  const [todaysRequests, setTodaysRequests] = useState([])
+  // 🆕 REMOVED: todaysRequests state (no longer needed)
+  // 🆕 REMOVED: alreadyRequestedTypes and isDuplicateSelected
 
-  // 🆕 DYNAMIC SETTINGS — lahat galing sa public API
+  // DYNAMIC SETTINGS — lahat galing sa public API
   const [maxCopies, setMaxCopies] = useState(5)
   const [dynamicDocuments, setDynamicDocuments] = useState([])
   const [dynamicForms, setDynamicForms] = useState([])
   const [settingsLoading, setSettingsLoading] = useState(true)
 
-  const API_BASE_URL = 'https://msu-tcto-backend-nta0.onrender.com/api'
+  const API_BASE_URL = 'https://msu-tcto-backend-oh2j.onrender.com/api'
 
   // ===========================================
   // GET CURRENT USER ROLE
@@ -63,7 +64,7 @@ export default function RequestDocument() {
   }, [])
 
   // ===========================================
-  // 🆕 FETCH PUBLIC SETTINGS — DITO GINAGAWA ANG DYNAMIC DOCUMENTS & FORMS
+  // FETCH PUBLIC SETTINGS — DYNAMIC DOCUMENTS & FORMS
   // ===========================================
   useEffect(() => {
     const fetchPublicSettings = async () => {
@@ -90,7 +91,7 @@ export default function RequestDocument() {
                 multipleLabel: doc.name === 'INC Form' ? 'subject' : null
               }
               
-              // Kategorya: Document o Form
+              // Category: Document or Form
               if (doc.category === 'Forms' || 
                   doc.name.includes('Form') || 
                   doc.name.includes('Clearance') || 
@@ -121,7 +122,7 @@ export default function RequestDocument() {
   }, [])
 
   // ===========================================
-  // 🆕 FILTER DOCUMENTS/FORMS BY USER ROLE (DYNAMIC)
+  // FILTER DOCUMENTS/FORMS BY USER ROLE (DYNAMIC)
   // ===========================================
   const documentTypes = useMemo(() => {
     if (!currentUser) return []
@@ -137,37 +138,7 @@ export default function RequestDocument() {
     )
   }, [currentUser, dynamicForms])
 
-  // ===========================================
-  // 🆕 FETCH TODAY'S REQUESTS (FOR DUPLICATE CHECK)
-  // ===========================================
-  useEffect(() => {
-    if (currentUser) fetchTodayRequests()
-    else setTodaysRequests([])
-  }, [currentUser])
-
-  const fetchTodayRequests = async () => {
-    try {
-      const token = localStorage.getItem('authToken')
-      if (!token) { setTodaysRequests([]); return }
-      const response = await fetch(`${API_BASE_URL}/requests/today`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      })
-      if (response.ok) {
-        const data = await response.json()
-        setTodaysRequests(data.requests || [])
-      } else { setTodaysRequests([]) }
-    } catch (err) {
-      setTodaysRequests([])
-    }
-  }
-
-  const alreadyRequestedTypes = useMemo(() => {
-    return new Set(todaysRequests.map(r => r.request_type))
-  }, [todaysRequests])
-
-  const isDuplicateSelected = useMemo(() => {
-    return formData.request_type ? alreadyRequestedTypes.has(formData.request_type) : false
-  }, [formData.request_type, alreadyRequestedTypes])
+  // 🆕 REMOVED: fetchTodayRequests and related useEffect
 
   useEffect(() => {
     const token = localStorage.getItem('authToken')
@@ -202,7 +173,7 @@ export default function RequestDocument() {
 
     if (!response.ok) {
       if (response.status === 401 || response.status === 403) throw new Error('AUTH_FAILED')
-      if (response.status === 409) throw new Error('DUPLICATE_REQUEST')
+      // 🆕 REMOVED: DUPLICATE_REQUEST handling (no longer needed)
       if (response.status === 0 || response.status === 500) throw new Error('SERVER_ERROR')
       throw new Error(data.message || data.error || 'Failed to submit request')
     }
@@ -230,7 +201,7 @@ export default function RequestDocument() {
     const newErrors = {}
     if (!formData.category) newErrors.category = 'Select request type.'
     if (!formData.request_type) newErrors.request_type = 'Select a document or form.'
-    if (isDuplicateSelected) newErrors.request_type = 'You have already requested this document today. Please try again tomorrow.'
+    // 🆕 REMOVED: duplicate check validation
     if (!formData.copies || formData.copies < 1) newErrors.copies = 'Invalid number of copies.'
     if (formData.copies > maxCopies) newErrors.copies = `Maximum ${maxCopies} copies allowed.`
     
@@ -324,13 +295,13 @@ export default function RequestDocument() {
     } catch (error) {
       if (error.message === 'AUTH_NO_TOKEN') { setAuthError(true); setSubmitError('You are not logged in.') }
       else if (error.message === 'AUTH_FAILED') { setAuthError(true); setSubmitError('Session expired.'); localStorage.removeItem('authToken') }
-      else if (error.message === 'DUPLICATE_REQUEST') { setSubmitError('Already requested today.') }
+      // 🆕 REMOVED: DUPLICATE_REQUEST handling
       else if (error.message === 'NETWORK_ERROR') { setNetworkError(true); setSubmitError('Network error.') }
       else if (error.message === 'SERVER_ERROR') { setNetworkError(true); setSubmitError('Server error.') }
       else { setSubmitError(error.message || 'Failed to submit.') }
     } finally {
       setIsSubmitting(false)
-      if (currentUser) fetchTodayRequests()
+      // 🆕 REMOVED: fetchTodayRequests refresh
     }
   }
 
@@ -404,17 +375,7 @@ export default function RequestDocument() {
         </div>
       )}
 
-      {isDuplicateSelected && !submitError && (
-        <div className="max-w-4xl mx-auto mb-4">
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 flex items-start gap-4">
-            <FaBan className="text-amber-600 text-xl mt-1" />
-            <div>
-              <h3 className="font-bold text-amber-800 text-lg">Already Requested Today</h3>
-              <p className="text-amber-700">You have already requested <strong>{formData.request_type}</strong> today. Please select a different one or try again tomorrow.</p>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* 🆕 REMOVED: Duplicate warning message block */}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
@@ -451,7 +412,7 @@ export default function RequestDocument() {
                 {errors.category && <p className="text-red-600 text-sm mt-2"><FaExclamationTriangle className="inline mr-1" />{errors.category}</p>}
               </div>
 
-              {/* 🆕 Document Type Dropdown — DYNAMIC */}
+              {/* Document Type Dropdown — DYNAMIC (NO DISABLED OPTIONS) */}
               {formData.category === 'Document' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Select Document</label>
@@ -459,22 +420,19 @@ export default function RequestDocument() {
                     disabled={authError || isSubmitting || networkError || documentTypes.length === 0}
                     className={`w-full p-3 bg-white border rounded-xl outline-none ${errors.request_type ? 'border-red-500' : 'border-gray-300'} ${(authError || isSubmitting || networkError || documentTypes.length === 0) ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     <option value="">Choose document...</option>
-                    {documentTypes.map(doc => {
-                      const isDisabled = alreadyRequestedTypes.has(doc.value)
-                      return (
-                        <option key={doc.value} value={doc.value} disabled={isDisabled}
-                          style={isDisabled ? { color: '#9CA3AF', fontStyle: 'italic' } : {}}>
-                          {doc.label}{isDisabled ? ' (Already Requested Today)' : ''}
-                        </option>
-                      )
-                    })}
+                    {documentTypes.map(doc => (
+                      // 🆕 REMOVED: disabled attribute for already requested docs
+                      <option key={doc.value} value={doc.value}>
+                        {doc.label}
+                      </option>
+                    ))}
                   </select>
                   {errors.request_type && <p className="text-red-600 text-sm mt-2"><FaExclamationTriangle className="inline mr-1" />{errors.request_type}</p>}
                   {documentTypes.length === 0 && currentUser && <p className="text-amber-600 text-sm mt-2"><FaInfoCircle className="inline mr-1" />No documents available for your role.</p>}
                 </div>
               )}
 
-              {/* 🆕 Form Type Dropdown — DYNAMIC */}
+              {/* Form Type Dropdown — DYNAMIC (NO DISABLED OPTIONS) */}
               {formData.category === 'Form' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Select Form</label>
@@ -482,15 +440,12 @@ export default function RequestDocument() {
                     disabled={authError || isSubmitting || networkError}
                     className={`w-full p-3 bg-white border rounded-xl outline-none ${errors.request_type ? 'border-red-500' : 'border-gray-300'} ${(authError || isSubmitting || networkError) ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     <option value="">Choose form...</option>
-                    {formTypes.map(form => {
-                      const isDisabled = alreadyRequestedTypes.has(form.value)
-                      return (
-                        <option key={form.value} value={form.value} disabled={isDisabled}
-                          style={isDisabled ? { color: '#9CA3AF', fontStyle: 'italic' } : {}}>
-                          {form.label}{isDisabled ? ' (Already Requested Today)' : ''}
-                        </option>
-                      )
-                    })}
+                    {formTypes.map(form => (
+                      // 🆕 REMOVED: disabled attribute for already requested forms
+                      <option key={form.value} value={form.value}>
+                        {form.label}
+                      </option>
+                    ))}
                   </select>
                   {errors.request_type && <p className="text-red-600 text-sm mt-2"><FaExclamationTriangle className="inline mr-1" />{errors.request_type}</p>}
                 </div>
@@ -504,7 +459,7 @@ export default function RequestDocument() {
                   </label>
                   <div className="flex items-center gap-4">
                     <select value={formData.copies} onChange={(e) => handleInputChange('copies', e.target.value)}
-                      disabled={authError || isSubmitting || networkError || isDuplicateSelected}
+                      disabled={authError || isSubmitting || networkError}
                       className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none disabled:opacity-50">
                       {copiesArray.map(num => <option key={num} value={num}>{num} {num > 1 ? 'copies' : 'copy'}</option>)}
                     </select>
@@ -524,7 +479,7 @@ export default function RequestDocument() {
                 </div>
               )}
 
-              {/* 🆕 Item Info Display — DYNAMIC */}
+              {/* Item Info Display — DYNAMIC */}
               {getSelectedItem && (
                 <div className="p-4 rounded-xl border bg-gradient-to-r from-[#7A0019]/5 to-[#0038A8]/5">
                   <div className="flex items-center justify-between mb-3">
@@ -557,7 +512,7 @@ export default function RequestDocument() {
               {/* Submit Button */}
               <div className="pt-4">
                 <button type="submit"
-                  disabled={authError || isSubmitting || networkError || !formData.category || !formData.request_type || isDuplicateSelected}
+                  disabled={authError || isSubmitting || networkError || !formData.category || !formData.request_type}
                   className="w-full py-4 rounded-xl bg-gradient-to-r from-[#7A0019] via-[#8B0033] to-[#0038A8] text-white font-bold shadow-lg hover:shadow-xl transition disabled:opacity-50 disabled:cursor-not-allowed">
                   {isSubmitting ? <><FaSpinner className="animate-spin inline mr-2" />Submitting...</> : 'Submit Request'}
                 </button>

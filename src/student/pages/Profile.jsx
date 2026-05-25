@@ -44,7 +44,7 @@ export default function Profile() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
   
-  const API_BASE_URL = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/auth` : 'https://msu-tcto-backend-nta0.onrender.com/api/auth';
+  const API_BASE_URL = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/auth` : 'https://msu-tcto-backend-oh2j.onrender.com/api/auth';
 
   // Listahan ng mga department sa MSU-TCTO
   const departments = [

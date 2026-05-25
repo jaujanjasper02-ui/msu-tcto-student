@@ -13,7 +13,7 @@ export default function NeedHelp() {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await fetch('https://msu-tcto-backend-nta0.onrender.com/api/public/settings');
+        const response = await fetch('https://msu-tcto-backend-oh2j.onrender.com/api/public/settings');
         if (response.ok) {
           const data = await response.json();
           if (data.contact_email) setContactEmail(data.contact_email);
