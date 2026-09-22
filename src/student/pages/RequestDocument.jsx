@@ -46,7 +46,7 @@ export default function RequestDocument() {
   const [dynamicForms, setDynamicForms] = useState([])
   const [settingsLoading, setSettingsLoading] = useState(true)
 
-  const API_BASE_URL = 'https://msu-tcto-backend-oh2j.onrender.com/api'
+  const API_BASE_URL = 'http://localhost:5000/api'
 
   // ===========================================
   // GET CURRENT USER ROLE

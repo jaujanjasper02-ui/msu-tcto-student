@@ -188,7 +188,7 @@ export default function Submitted() {
               </div>
               <div>
                 <p className="text-xs text-gray-500">Email</p>
-                <p className="text-sm font-medium">registrar@msutcto.edu.ph</p>
+                <p className="text-sm font-medium">registrar@trac.edu.ph</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -197,7 +197,7 @@ export default function Submitted() {
               </div>
               <div>
                 <p className="text-xs text-gray-500">Phone</p>
-                <p className="text-sm font-medium">(068) 268-4231</p>
+                <p className="text-sm font-medium">(068) 123-4567</p>
               </div>
             </div>
           </div>
