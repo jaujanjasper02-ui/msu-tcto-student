@@ -17,17 +17,16 @@ export default function Button({
   
   const baseStyles = "inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
   
-
   const variants = {
-    primary: "bg-gradient-to-r from-[#7A0019] to-[#0038A8] text-white hover:opacity-90 hover:shadow-md focus:ring-[#7A0019]",
-    secondary: "bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 hover:border-gray-400 focus:ring-gray-400",
-    outline: "bg-transparent text-[#7A0019] border-2 border-[#7A0019] hover:bg-[#7A0019]/5 focus:ring-[#7A0019]",
+    primary: "bg-gradient-to-r from-[#1B5E20] to-[#2E7D32] text-white hover:opacity-90 hover:shadow-md focus:ring-[#1B5E20]",
+    secondary: "bg-[#F1F8E9] text-[#1B5E20] border border-green-200 hover:bg-green-100 hover:border-green-300 focus:ring-green-400",
+    outline: "bg-transparent text-[#1B5E20] border-2 border-[#1B5E20] hover:bg-[#1B5E20]/5 focus:ring-[#1B5E20]",
     danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
-    success: "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500",
-    warning: "bg-yellow-500 text-white hover:bg-yellow-600 focus:ring-yellow-400",
-    ghost: "bg-transparent text-gray-600 hover:bg-gray-100 focus:ring-gray-400"
+    success: "bg-[#2E7D32] text-white hover:bg-[#1B5E20] focus:ring-green-500",
+    warning: "bg-[#F9A825] text-white hover:bg-[#F57F17] focus:ring-amber-400",
+    ghost: "bg-transparent text-gray-600 hover:bg-[#F1F8E9] focus:ring-green-400",
+    gold: "bg-gradient-to-r from-[#F9A825] to-[#F57F17] text-white hover:opacity-90 focus:ring-amber-400"
   };
-  
   
   const sizes = {
     xs: "px-3 py-1.5 text-xs",

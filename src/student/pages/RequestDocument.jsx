@@ -1,5 +1,4 @@
 import Card from '../components/Card'
-import Button from '../components/Button'
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { 
@@ -11,15 +10,14 @@ import {
   FaFileSignature, 
   FaCheckCircle, 
   FaExclamationTriangle, 
-  FaDownload, 
   FaMoneyBillWave, 
   FaCalendarAlt, 
   FaSpinner,
   FaUserGraduate,
   FaUserTie,
   FaWifi,
-  FaBan
 } from 'react-icons/fa'
+import { SCHOOL, OFFICE, SYSTEM, DOCUMENTS, FORMS, THEME } from '../../config/trac.config'
 
 export default function RequestDocument() {
   const [formData, setFormData] = useState({
@@ -37,20 +35,13 @@ export default function RequestDocument() {
   const [currentUser, setCurrentUser] = useState(null)
   const nav = useNavigate()
 
-  // 🆕 REMOVED: todaysRequests state (no longer needed)
-  // 🆕 REMOVED: alreadyRequestedTypes and isDuplicateSelected
-
-  // DYNAMIC SETTINGS — lahat galing sa public API
-  const [maxCopies, setMaxCopies] = useState(5)
+  const [maxCopies, setMaxCopies] = useState(SYSTEM.requests.maxCopies)
   const [dynamicDocuments, setDynamicDocuments] = useState([])
   const [dynamicForms, setDynamicForms] = useState([])
   const [settingsLoading, setSettingsLoading] = useState(true)
 
-  const API_BASE_URL = 'http://localhost:5000/api'
+  const API_BASE_URL = SYSTEM.apiBaseUrl
 
-  // ===========================================
-  // GET CURRENT USER ROLE
-  // ===========================================
   useEffect(() => {
     const userStr = localStorage.getItem('currentUser')
     if (userStr) {
@@ -63,9 +54,7 @@ export default function RequestDocument() {
     }
   }, [])
 
-  // ===========================================
-  // FETCH PUBLIC SETTINGS — DYNAMIC DOCUMENTS & FORMS
-  // ===========================================
+  // FETCH PUBLIC SETTINGS — with TRAC fallback
   useEffect(() => {
     const fetchPublicSettings = async () => {
       setSettingsLoading(true)
@@ -73,7 +62,7 @@ export default function RequestDocument() {
         const response = await fetch(`${API_BASE_URL}/public/settings`)
         if (response.ok) {
           const data = await response.json()
-          setMaxCopies(data.max_copies_per_request || 5)
+          setMaxCopies(data.max_copies_per_request || SYSTEM.requests.maxCopies)
           
           if (data.document_settings && data.document_settings.length > 0) {
             const docList = []
@@ -87,17 +76,18 @@ export default function RequestDocument() {
                 fee: doc.fee || 0,
                 feeDisplay: `₱${(doc.fee || 0).toFixed(2)}`,
                 allowedRoles: doc.allowedRoles || ['student', 'alumni'],
-                allowsMultiple: doc.name === 'INC Form',
-                multipleLabel: doc.name === 'INC Form' ? 'subject' : null
+                allowsMultiple: doc.name === 'INC Form' || doc.name === 'Incomplete (INC) Form',
+                multipleLabel: doc.name.includes('INC') ? 'subject' : null
               }
               
-              // Category: Document or Form
               if (doc.category === 'Forms' || 
                   doc.name.includes('Form') || 
                   doc.name.includes('Clearance') || 
                   doc.name.includes('INC') || 
                   doc.name.includes('Advance Credit') || 
-                  doc.name.includes('Graduation')) {
+                  doc.name.includes('Graduation') ||
+                  doc.name.includes('Honorable') ||
+                  doc.name.includes('Dismissal')) {
                 item.category = 'Form'
                 formList.push(item)
               } else {
@@ -108,12 +98,80 @@ export default function RequestDocument() {
             
             setDynamicDocuments(docList)
             setDynamicForms(formList)
+          } else {
+            // Fallback to TRAC config
+            const tracDocs = DOCUMENTS.map(d => ({
+              value: d.name,
+              label: d.label,
+              days: d.processing_days,
+              fee: d.fee,
+              feeDisplay: d.feeDisplay,
+              allowedRoles: d.allowedRoles,
+              category: 'Document'
+            }))
+            const tracForms = FORMS.filter(f => f.category !== 'Add-on').map(f => ({
+              value: f.name,
+              label: f.label,
+              days: f.processing_days,
+              fee: f.fee,
+              feeDisplay: f.feeDisplay,
+              allowedRoles: f.allowedRoles,
+              allowsMultiple: f.allowsMultiple || false,
+              multipleLabel: f.multipleLabel || null,
+              category: 'Form'
+            }))
+            setDynamicDocuments(tracDocs)
+            setDynamicForms(tracForms)
           }
         } else {
-          console.warn('⚠️ Could not fetch public settings, using defaults')
+          // API failed - use TRAC config fallback
+          const tracDocs = DOCUMENTS.map(d => ({
+            value: d.name,
+            label: d.label,
+            days: d.processing_days,
+            fee: d.fee,
+            feeDisplay: d.feeDisplay,
+            allowedRoles: d.allowedRoles,
+            category: 'Document'
+          }))
+          const tracForms = FORMS.filter(f => f.category !== 'Add-on').map(f => ({
+            value: f.name,
+            label: f.label,
+            days: f.processing_days,
+            fee: f.fee,
+            feeDisplay: f.feeDisplay,
+            allowedRoles: f.allowedRoles,
+            allowsMultiple: f.allowsMultiple || false,
+            multipleLabel: f.multipleLabel || null,
+            category: 'Form'
+          }))
+          setDynamicDocuments(tracDocs)
+          setDynamicForms(tracForms)
         }
       } catch (err) {
-        console.warn('⚠️ Using default settings')
+        console.warn('Using TRAC default settings from config')
+        const tracDocs = DOCUMENTS.map(d => ({
+          value: d.name,
+          label: d.label,
+          days: d.processing_days,
+          fee: d.fee,
+          feeDisplay: d.feeDisplay,
+          allowedRoles: d.allowedRoles,
+          category: 'Document'
+        }))
+        const tracForms = FORMS.filter(f => f.category !== 'Add-on').map(f => ({
+          value: f.name,
+          label: f.label,
+          days: f.processing_days,
+          fee: f.fee,
+          feeDisplay: f.feeDisplay,
+          allowedRoles: f.allowedRoles,
+          allowsMultiple: f.allowsMultiple || false,
+          multipleLabel: f.multipleLabel || null,
+          category: 'Form'
+        }))
+        setDynamicDocuments(tracDocs)
+        setDynamicForms(tracForms)
       } finally {
         setSettingsLoading(false)
       }
@@ -121,9 +179,6 @@ export default function RequestDocument() {
     fetchPublicSettings()
   }, [])
 
-  // ===========================================
-  // FILTER DOCUMENTS/FORMS BY USER ROLE (DYNAMIC)
-  // ===========================================
   const documentTypes = useMemo(() => {
     if (!currentUser) return []
     return dynamicDocuments.filter(doc => 
@@ -137,8 +192,6 @@ export default function RequestDocument() {
       form.allowedRoles.includes(currentUser.role)
     )
   }, [currentUser, dynamicForms])
-
-  // 🆕 REMOVED: fetchTodayRequests and related useEffect
 
   useEffect(() => {
     const token = localStorage.getItem('authToken')
@@ -157,23 +210,18 @@ export default function RequestDocument() {
   const submitRequest = async (requestData) => {
     const token = getAuthToken()
     if (!token) throw new Error('AUTH_NO_TOKEN')
-
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 10000)
-
     const response = await fetch(`${API_BASE_URL}/requests/request`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify(requestData),
       signal: controller.signal
     })
-
     clearTimeout(timeoutId)
     const data = await response.json()
-
     if (!response.ok) {
       if (response.status === 401 || response.status === 403) throw new Error('AUTH_FAILED')
-      // 🆕 REMOVED: DUPLICATE_REQUEST handling (no longer needed)
       if (response.status === 0 || response.status === 500) throw new Error('SERVER_ERROR')
       throw new Error(data.message || data.error || 'Failed to submit request')
     }
@@ -201,7 +249,6 @@ export default function RequestDocument() {
     const newErrors = {}
     if (!formData.category) newErrors.category = 'Select request type.'
     if (!formData.request_type) newErrors.request_type = 'Select a document or form.'
-    // 🆕 REMOVED: duplicate check validation
     if (!formData.copies || formData.copies < 1) newErrors.copies = 'Invalid number of copies.'
     if (formData.copies > maxCopies) newErrors.copies = `Maximum ${maxCopies} copies allowed.`
     
@@ -295,13 +342,11 @@ export default function RequestDocument() {
     } catch (error) {
       if (error.message === 'AUTH_NO_TOKEN') { setAuthError(true); setSubmitError('You are not logged in.') }
       else if (error.message === 'AUTH_FAILED') { setAuthError(true); setSubmitError('Session expired.'); localStorage.removeItem('authToken') }
-      // 🆕 REMOVED: DUPLICATE_REQUEST handling
       else if (error.message === 'NETWORK_ERROR') { setNetworkError(true); setSubmitError('Network error.') }
       else if (error.message === 'SERVER_ERROR') { setNetworkError(true); setSubmitError('Server error.') }
       else { setSubmitError(error.message || 'Failed to submit.') }
     } finally {
       setIsSubmitting(false)
-      // 🆕 REMOVED: fetchTodayRequests refresh
     }
   }
 
@@ -310,8 +355,8 @@ export default function RequestDocument() {
     return (
       <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
         currentUser.role === 'student' 
-          ? 'bg-gradient-to-r from-green-600 to-green-700 text-white'
-          : 'bg-gradient-to-r from-purple-600 to-purple-700 text-white'
+          ? 'bg-gradient-to-r from-[#1B5E20] to-[#2E7D32] text-white'
+          : 'bg-gradient-to-r from-[#F9A825] to-[#F57F17] text-white'
       }`}>
         {currentUser.role === 'student' ? <FaUserGraduate /> : <FaUserTie />}
         <span>{currentUser.role === 'student' ? 'Student' : 'Alumni'}</span>
@@ -321,10 +366,10 @@ export default function RequestDocument() {
 
   if (settingsLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#F1F8E9] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-[#7A0019] border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-          <p className="text-gray-500 text-sm">Loading settings...</p>
+          <div className="w-8 h-8 border-2 border-[#1B5E20] border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+          <p className="text-gray-500 text-sm">Loading TRAC settings...</p>
         </div>
       </div>
     )
@@ -332,11 +377,12 @@ export default function RequestDocument() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 py-8 px-4">
-      {/* Header */}
+      {/* Header - TRAC Theme */}
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-[#7A0019] to-[#0038A8] bg-clip-text text-transparent">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-[#1B5E20] to-[#F9A825] bg-clip-text text-transparent">
           Document/Form Request
         </h1>
+        <p className="text-sm text-gray-500 mt-1">{SCHOOL.fullName}</p>
         <div className="flex justify-center mt-3"><RoleBadge /></div>
       </div>
 
@@ -348,7 +394,7 @@ export default function RequestDocument() {
             <div>
               <h3 className="font-bold text-red-800 text-lg">Authentication Required</h3>
               <p className="text-red-700">{submitError || 'Please sign in to submit requests.'}</p>
-              <button onClick={handleAuthError} className="mt-3 px-4 py-2 bg-[#7A0019] text-white rounded-lg text-sm">Go to Login</button>
+              <button onClick={handleAuthError} className="mt-3 px-4 py-2 bg-[#1B5E20] text-white rounded-lg text-sm">Go to Login</button>
             </div>
           </div>
         </div>
@@ -375,56 +421,53 @@ export default function RequestDocument() {
         </div>
       )}
 
-      {/* 🆕 REMOVED: Duplicate warning message block */}
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <Card className="shadow-sm rounded-xl p-6 border border-gray-200">
-            <h3 className="text-xl font-bold text-gray-800 mb-6">Request Details</h3>
+          <Card className="shadow-sm rounded-xl p-6 border border-green-100">
+            <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+              <span className="w-1 h-6 bg-[#1B5E20] rounded-full"></span>
+              Request Details
+            </h3>
             
             <form className="space-y-6" onSubmit={submit}>
-              {/* Category Selection */}
+              {/* Category Selection - TRAC Colors */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">Category</label>
                 <div className="grid grid-cols-2 gap-4">
                   <button type="button" onClick={() => handleInputChange('category', 'Document')}
                     disabled={authError || isSubmitting || networkError}
-                    className={`p-5 border-2 rounded-xl text-center transition ${formData.category === 'Document' ? 'border-[#7A0019] bg-[#7A0019]/5 shadow-lg' : 'border-gray-300 hover:bg-gray-50'} ${(authError || isSubmitting || networkError) ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                    <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-3 ${formData.category === 'Document' ? 'bg-[#7A0019] text-white' : 'bg-gray-100 text-gray-600'}`}>
+                    className={`p-5 border-2 rounded-xl text-center transition ${formData.category === 'Document' ? 'border-[#1B5E20] bg-[#1B5E20]/5 shadow-lg' : 'border-gray-300 hover:bg-gray-50'} ${(authError || isSubmitting || networkError) ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                    <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-3 ${formData.category === 'Document' ? 'bg-[#1B5E20] text-white' : 'bg-gray-100 text-gray-600'}`}>
                       <FaFileAlt className="text-xl" />
                     </div>
                     <div className="font-bold text-gray-800">Document</div>
-                    <div className="text-xs text-gray-600">Transcripts, Certificates</div>
+                    <div className="text-xs text-gray-600">TOR, COR, COG, CAV</div>
                     {formData.category === 'Document' && <FaCheckCircle className="inline text-green-600 mt-2" />}
                   </button>
                   
                   <button type="button" onClick={() => handleInputChange('category', 'Form')}
                     disabled={authError || isSubmitting || networkError}
-                    className={`p-5 border-2 rounded-xl text-center transition ${formData.category === 'Form' ? 'border-[#0038A8] bg-[#0038A8]/5 shadow-lg' : 'border-gray-300 hover:bg-gray-50'} ${(authError || isSubmitting || networkError) ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                    <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-3 ${formData.category === 'Form' ? 'bg-[#0038A8] text-white' : 'bg-gray-100 text-gray-600'}`}>
+                    className={`p-5 border-2 rounded-xl text-center transition ${formData.category === 'Form' ? 'border-[#F9A825] bg-[#F9A825]/10 shadow-lg' : 'border-gray-300 hover:bg-gray-50'} ${(authError || isSubmitting || networkError) ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                    <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-3 ${formData.category === 'Form' ? 'bg-[#F9A825] text-white' : 'bg-gray-100 text-gray-600'}`}>
                       <FaFileSignature className="text-xl" />
                     </div>
                     <div className="font-bold text-gray-800">Form</div>
-                    <div className="text-xs text-gray-600">Clearance, Graduation</div>
-                    {formData.category === 'Form' && <FaCheckCircle className="inline text-blue-600 mt-2" />}
+                    <div className="text-xs text-gray-600">INC, Shifting, Adding</div>
+                    {formData.category === 'Form' && <FaCheckCircle className="inline text-amber-600 mt-2" />}
                   </button>
                 </div>
                 {errors.category && <p className="text-red-600 text-sm mt-2"><FaExclamationTriangle className="inline mr-1" />{errors.category}</p>}
               </div>
 
-              {/* Document Type Dropdown — DYNAMIC (NO DISABLED OPTIONS) */}
               {formData.category === 'Document' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Select Document</label>
                   <select value={formData.request_type || ''} onChange={handleDocumentSelect}
                     disabled={authError || isSubmitting || networkError || documentTypes.length === 0}
-                    className={`w-full p-3 bg-white border rounded-xl outline-none ${errors.request_type ? 'border-red-500' : 'border-gray-300'} ${(authError || isSubmitting || networkError || documentTypes.length === 0) ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                    className={`w-full p-3 bg-white border rounded-xl outline-none ${errors.request_type ? 'border-red-500' : 'border-gray-300 focus:border-[#1B5E20]'} ${(authError || isSubmitting || networkError || documentTypes.length === 0) ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     <option value="">Choose document...</option>
                     {documentTypes.map(doc => (
-                      // 🆕 REMOVED: disabled attribute for already requested docs
-                      <option key={doc.value} value={doc.value}>
-                        {doc.label}
-                      </option>
+                      <option key={doc.value} value={doc.value}>{doc.label}</option>
                     ))}
                   </select>
                   {errors.request_type && <p className="text-red-600 text-sm mt-2"><FaExclamationTriangle className="inline mr-1" />{errors.request_type}</p>}
@@ -432,26 +475,21 @@ export default function RequestDocument() {
                 </div>
               )}
 
-              {/* Form Type Dropdown — DYNAMIC (NO DISABLED OPTIONS) */}
               {formData.category === 'Form' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Select Form</label>
                   <select value={formData.request_type || ''} onChange={handleFormSelect}
                     disabled={authError || isSubmitting || networkError}
-                    className={`w-full p-3 bg-white border rounded-xl outline-none ${errors.request_type ? 'border-red-500' : 'border-gray-300'} ${(authError || isSubmitting || networkError) ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                    className={`w-full p-3 bg-white border rounded-xl outline-none ${errors.request_type ? 'border-red-500' : 'border-gray-300 focus:border-[#F9A825]'} ${(authError || isSubmitting || networkError) ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     <option value="">Choose form...</option>
                     {formTypes.map(form => (
-                      // 🆕 REMOVED: disabled attribute for already requested forms
-                      <option key={form.value} value={form.value}>
-                        {form.label}
-                      </option>
+                      <option key={form.value} value={form.value}>{form.label}</option>
                     ))}
                   </select>
                   {errors.request_type && <p className="text-red-600 text-sm mt-2"><FaExclamationTriangle className="inline mr-1" />{errors.request_type}</p>}
                 </div>
               )}
 
-              {/* Number of Copies */}
               {formData.request_type && allowsMultipleCopies && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -460,93 +498,109 @@ export default function RequestDocument() {
                   <div className="flex items-center gap-4">
                     <select value={formData.copies} onChange={(e) => handleInputChange('copies', e.target.value)}
                       disabled={authError || isSubmitting || networkError}
-                      className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none disabled:opacity-50">
+                      className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:border-[#1B5E20] disabled:opacity-50">
                       {copiesArray.map(num => <option key={num} value={num}>{num} {num > 1 ? 'copies' : 'copy'}</option>)}
                     </select>
                     <div className="text-right">
                       <div className="text-sm text-gray-600">Total Fee:</div>
-                      <div className="text-xl font-bold text-[#7A0019]">{calculateTotalFee}</div>
+                      <div className="text-xl font-bold text-[#1B5E20]">{calculateTotalFee}</div>
                     </div>
                   </div>
                   {errors.copies && <p className="text-red-600 text-sm mt-2"><FaExclamationTriangle className="inline mr-1" />{errors.copies}</p>}
                 </div>
               )}
 
-              {/* Single-copy forms notice */}
               {formData.request_type && formData.category === 'Form' && !allowsMultipleCopies && (
-                <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl text-sm text-blue-800">
+                <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
                   <FaInfoCircle className="inline mr-2" />This form is issued as a single copy only.
                 </div>
               )}
 
-              {/* Item Info Display — DYNAMIC */}
               {getSelectedItem && (
-                <div className="p-4 rounded-xl border bg-gradient-to-r from-[#7A0019]/5 to-[#0038A8]/5">
+                <div className="p-4 rounded-xl border bg-gradient-to-r from-[#1B5E20]/5 to-[#F9A825]/10 border-green-100">
                   <div className="flex items-center justify-between mb-3">
                     <span className="font-bold text-gray-800">{getSelectedItem.label}</span>
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium text-white ${formData.category === 'Document' ? 'bg-[#7A0019]' : 'bg-[#0038A8]'}`}>
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium text-white ${formData.category === 'Document' ? 'bg-[#1B5E20]' : 'bg-[#F9A825]'}`}>
                       {formData.category}
                     </span>
                   </div>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div><FaClock className="inline text-gray-500 mr-1" />Processing: <strong>{getSelectedItem.days} day(s)</strong></div>
-                    <div className="text-right"><FaMoneyBillWave className="inline text-gray-500 mr-1" />Fee: <strong className="text-[#7A0019]">{getSelectedItem.feeDisplay}/copy</strong></div>
+                    <div className="text-right"><FaMoneyBillWave className="inline text-gray-500 mr-1" />Fee: <strong className="text-[#1B5E20]">{getSelectedItem.feeDisplay}/copy</strong></div>
                   </div>
                   {getEstimatedCompletionDate && (
-                    <div className="mt-3 pt-3 border-t">
-                      <FaCalendarAlt className="inline text-[#7A0019] mr-1" />
+                    <div className="mt-3 pt-3 border-t border-green-100">
+                      <FaCalendarAlt className="inline text-[#1B5E20] mr-1" />
                       <span className="text-xs text-gray-600">Estimated: <strong>{getEstimatedCompletionDate.formatted}</strong></span>
                     </div>
                   )}
                 </div>
               )}
 
-              {/* Purpose */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Purpose <span className="text-gray-400 text-xs">(Optional)</span></label>
                 <textarea value={formData.purpose} onChange={(e) => handleInputChange('purpose', e.target.value)}
                   disabled={authError || isSubmitting || networkError} rows={3}
-                  className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none resize-none disabled:opacity-50" />
+                  placeholder="e.g. For employment, scholarship, board exam..."
+                  className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none resize-none focus:border-[#1B5E20] disabled:opacity-50" />
               </div>
 
-              {/* Submit Button */}
               <div className="pt-4">
                 <button type="submit"
                   disabled={authError || isSubmitting || networkError || !formData.category || !formData.request_type}
-                  className="w-full py-4 rounded-xl bg-gradient-to-r from-[#7A0019] via-[#8B0033] to-[#0038A8] text-white font-bold shadow-lg hover:shadow-xl transition disabled:opacity-50 disabled:cursor-not-allowed">
+                  className="w-full py-4 rounded-xl bg-gradient-to-r from-[#1B5E20] to-[#2E7D32] text-white font-bold shadow-lg hover:shadow-xl transition disabled:opacity-50 disabled:cursor-not-allowed">
                   {isSubmitting ? <><FaSpinner className="animate-spin inline mr-2" />Submitting...</> : 'Submit Request'}
                 </button>
               </div>
 
-              {/* Pickup Notice */}
-              <div className="p-4 bg-gradient-to-r from-[#7A0019]/5 to-[#0038A8]/5 border border-[#7A0019]/20 rounded-xl text-sm">
-                <FaBuilding className="inline text-[#7A0019] mr-2" /><strong>Office Pickup Required</strong> — Bring valid ID and receipt.
+              <div className="p-4 bg-gradient-to-r from-[#1B5E20]/5 to-[#F9A825]/10 border border-green-100 rounded-xl text-sm">
+                <FaBuilding className="inline text-[#1B5E20] mr-2" /><strong>Office Pickup Required</strong> — Bring valid ID and receipt at {SCHOOL.contact.location}.
               </div>
             </form>
           </Card>
         </div>
 
-        {/* Sidebar */}
         <div className="space-y-6">
-          <Card className="shadow-sm rounded-xl p-6 border border-gray-200">
-            <h4 className="font-bold text-gray-800 text-lg mb-4">Processing Info</h4>
+          <Card className="shadow-sm rounded-xl p-6 border border-green-100">
+            <h4 className="font-bold text-gray-800 text-lg mb-4 flex items-center gap-2">
+              <span className="w-1 h-5 bg-[#1B5E20] rounded-full"></span>Processing Info
+            </h4>
             <div className="space-y-3 text-sm">
-              <div><FaClock className="inline text-[#7A0019] mr-2" />Documents: 1-6 working days<br />Forms: 1 working day</div>
-              <div><FaEnvelope className="inline text-[#0038A8] mr-2" />Email notifications for status updates</div>
-              <div><FaBuilding className="inline text-[#7A0019] mr-2" />Pickup at Registrar's Office</div>
+              <div><FaClock className="inline text-[#1B5E20] mr-2" />Documents: {OFFICE.processing.documents}<br />Forms: {OFFICE.processing.forms}</div>
+              <div><FaEnvelope className="inline text-[#2E7D32] mr-2" />Email notifications for status updates</div>
+              <div><FaBuilding className="inline text-[#1B5E20] mr-2" />Pickup at Registrar's Office</div>
             </div>
-            <div className="mt-4 pt-4 border-t">
+            <div className="mt-4 pt-4 border-t border-green-50">
               <h5 className="font-bold text-gray-700 mb-2">Required for Pickup:</h5>
               <ul className="space-y-1 text-sm">
-                <li>• Valid ID</li><li>• Official Receipt</li><li>• Authorization Letter (if representative)</li>
+                {OFFICE.pickup.required.map((item, idx) => <li key={idx}>• {item}</li>)}
               </ul>
             </div>
           </Card>
-          <Card className="shadow-sm rounded-xl p-6 border border-gray-200">
-            <h4 className="font-bold text-gray-800 mb-4">Office Hours</h4>
+
+          <Card className="shadow-sm rounded-xl p-6 border border-green-100">
+            <h4 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <span className="w-1 h-5 bg-[#F9A825] rounded-full"></span>Office Hours
+            </h4>
             <div className="space-y-3 text-sm">
-              <div><strong>Monday - Friday:</strong> 8AM - 4:45PM</div>
-              <div className="text-red-600"><strong>Weekends:</strong> Closed</div>
+              <div><strong>{OFFICE.schedule.days}:</strong><br />{OFFICE.schedule.morning}<br />{OFFICE.schedule.afternoon}</div>
+              <div className="text-amber-600 text-xs">{OFFICE.schedule.closedNote}</div>
+              <div className="text-red-600"><strong>Weekends:</strong> {OFFICE.schedule.weekends}</div>
+            </div>
+            <div className="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-500">
+              <strong>Fee Reference:</strong><br />
+              TOR ₱100/page, COR ₱20, COG ₱20, GWA ₱70, CAV ₱50, INC ₱15/subject, Honorable Dismissal ₱50
+            </div>
+          </Card>
+
+          <Card className="shadow-sm rounded-xl p-6 border border-green-100 bg-[#F1F8E9]/50">
+            <h4 className="font-bold text-[#1B5E20] mb-2 text-sm">TRAC Institutes</h4>
+            <div className="text-xs text-gray-600 space-y-1">
+              <p><strong>ICS</strong> - Computing Studies</p>
+              <p><strong>ISCJS</strong> - Criminal Justice</p>
+              <p><strong>IVTES</strong> - Vocational & Tech Ed</p>
+              <p><strong>IAS</strong> - Agricultural Sciences</p>
+              <p><strong>GS</strong> - Graduate Studies</p>
             </div>
           </Card>
         </div>

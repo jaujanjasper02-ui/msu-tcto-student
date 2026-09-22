@@ -1,7 +1,33 @@
 @import "tailwindcss";
 
+:root {
+  --trac-primary: #1B5E20;
+  --trac-primary-dark: #0D3B10;
+  --trac-primary-light: #2E7D32;
+  --trac-secondary: #F9A825;
+  --trac-secondary-dark: #F57F17;
+  --trac-accent: #33691E;
+  --trac-bg: #F1F8E9;
+}
+
 body {
-  background-color: #f3f4f6; /* gray-100 */
+  background-color: #F1F8E9; /* trac background light */
   color: #111827;
-  font-family: system-ui, sans-serif;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* TRAC Theme Utilities */
+.bg-trac-gradient {
+  background: linear-gradient(to right, var(--trac-primary), var(--trac-primary-light));
+}
+
+.bg-trac-gradient-gold {
+  background: linear-gradient(to right, var(--trac-primary), var(--trac-secondary));
+}
+
+.text-trac-gradient {
+  background: linear-gradient(to right, var(--trac-primary), var(--trac-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

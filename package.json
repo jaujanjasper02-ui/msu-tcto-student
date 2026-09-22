@@ -1,7 +1,8 @@
 {
-  "name": "msu-tcto-request",
+  "name": "trac-request",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "TRAC REQUEST - Registrar Queuing System with Notification - Tawi-Tawi Regional Agricultural College - Reuses MSU-TCTO queue/auth/status workflow, configurable TRAC data",
   "type": "module",
   "scripts": {
     "dev": "vite",
