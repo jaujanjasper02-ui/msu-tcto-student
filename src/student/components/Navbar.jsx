@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaSignOutAlt, FaArrowLeft, FaUserCircle } from "react-icons/fa";
+import { SCHOOL, THEME } from "../../config/trac.config";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -9,9 +10,9 @@ export default function Navbar() {
 
   const isDashboard = location.pathname === "/dashboard";
 
-  const showBackButton = ["/request", "/track", "/help", "/profile", "/faq"].includes(
+  const showBackButton = ["/request", "/track", "/help", "/profile", "/faq", "/privacy", "/need-help"].includes(
     location.pathname
-  );
+  ) || location.pathname.startsWith("/track/");
 
   const handleLogout = () => {
     setShowLogoutConfirm(true);
@@ -25,7 +26,6 @@ export default function Navbar() {
     navigate("/");
   };
 
-  // 🆕 Handle logo click - navigate to dashboard
   const handleLogoClick = () => {
     navigate("/dashboard");
   };
@@ -33,7 +33,7 @@ export default function Navbar() {
   return (
     <>
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 shadow-sm w-full z-40">
+      <header className="bg-white border-b border-green-100 shadow-sm w-full z-40">
         <div className="max-w-5xl mx-auto flex items-center justify-between p-3 sm:p-4 px-4 sm:px-6">
           
           {/* LEFT: Back Button + Logo + Title */}
@@ -41,14 +41,13 @@ export default function Navbar() {
             {showBackButton && (
               <button
                 onClick={() => navigate(-1)}
-                className="flex-shrink-0 flex items-center justify-center bg-slate-100 text-slate-600 w-9 h-9 rounded-full hover:bg-[#7A0019] hover:text-white transition-all duration-200"
+                className="flex-shrink-0 flex items-center justify-center bg-green-50 text-[#1B5E20] w-9 h-9 rounded-full hover:bg-[#1B5E20] hover:text-white transition-all duration-200"
                 aria-label="Back"
               >
                 <FaArrowLeft />
               </button>
             )}
 
-            {/* 🆕 Logo - Made clickable to navigate to dashboard */}
             <button
               onClick={handleLogoClick}
               className="flex-shrink-0 transition-transform hover:scale-105 active:scale-95 focus:outline-none"
@@ -56,23 +55,26 @@ export default function Navbar() {
               title="Go to Dashboard"
             >
               <img
-                src="/Msu-Tcto_Logo.jpg"
-                alt="MSU Logo"
-                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover shadow-sm border border-slate-100 cursor-pointer"
+                src={SCHOOL.logo}
+                alt={`${SCHOOL.shortName} Logo`}
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover shadow-sm border border-green-100 bg-white cursor-pointer"
+                onError={(e) => { e.target.src = SCHOOL.logoFallback; }}
               />
             </button>
 
-            {/* 🆕 Title section - Also clickable to navigate to dashboard */}
             <button
               onClick={handleLogoClick}
               className="flex-1 text-left focus:outline-none"
               aria-label="Go to Dashboard"
             >
-              <h1 className="text-base sm:text-xl font-black text-[#5F0231] leading-tight tracking-tight hover:text-[#7A0019] transition-colors">
-                MSU-TCTO
+              <h1 className="text-base sm:text-xl font-black text-[#1B5E20] leading-tight tracking-tight hover:text-[#2E7D32] transition-colors">
+                {SCHOOL.shortName}-{SCHOOL.systemName.split(' ')[1] || 'REQUEST'}
               </h1>
-              <p className="text-[9px] sm:text-xs text-slate-500 font-medium uppercase tracking-wider leading-tight">
-                Registrar Queuing System with Notification
+              <p className="text-[9px] sm:text-xs text-gray-500 font-medium uppercase tracking-wider leading-tight hidden sm:block">
+                {SCHOOL.subtitle}
+              </p>
+              <p className="text-[8px] sm:hidden text-gray-400">
+                {SCHOOL.fullName}
               </p>
             </button>
           </div>
@@ -84,30 +86,39 @@ export default function Navbar() {
                 <button
                   onClick={() => navigate("/profile")}
                   title="Profile"
-                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-[#0038A8] hover:text-white transition-all border border-slate-100"
+                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-green-50 text-[#1B5E20] flex items-center justify-center hover:bg-[#1B5E20] hover:text-white transition-all border border-green-100"
                 >
                   <FaUserCircle className="text-xl sm:text-2xl" />
                 </button>
                 
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 bg-[#7A0019] text-white px-3 sm:px-5 py-2 rounded-xl font-bold hover:bg-[#5a0012] hover:shadow-lg hover:shadow-maroon-100 transition-all text-xs sm:text-sm"
+                  className="flex items-center gap-2 bg-[#1B5E20] text-white px-3 sm:px-5 py-2 rounded-xl font-bold hover:bg-[#0D3B10] hover:shadow-lg transition-all text-xs sm:text-sm"
                 >
                   <FaSignOutAlt className="text-sm" />
                   <span className="hidden xs:inline">Logout</span>
                 </button>
               </>
             )}
+            {!isDashboard && (
+              <button
+                onClick={() => navigate("/profile")}
+                title="Profile"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-green-50 text-[#1B5E20] flex items-center justify-center hover:bg-[#1B5E20] hover:text-white transition-all border border-green-100"
+              >
+                <FaUserCircle className="text-xl sm:text-2xl" />
+              </button>
+            )}
           </div>
         </div>
       </header>
 
-      {/* LOGOUT MODAL - UPDATED UI DESIGN */}
+      {/* LOGOUT MODAL - TRAC Theme */}
       {showLogoutConfirm && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-[100] animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
-            {/* Header with MSU Gradient */}
-            <div className="bg-gradient-to-r from-[#5f0231] to-[#0038A8] px-6 py-4">
+            {/* Header with TRAC Gradient */}
+            <div className="bg-gradient-to-r from-[#1B5E20] to-[#2E7D32] px-6 py-4">
               <div className="flex items-center justify-center">
                 <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                   <FaSignOutAlt className="text-white text-xl" />
@@ -132,7 +143,7 @@ export default function Navbar() {
                 </button>
                 <button
                   onClick={confirmLogout}
-                  className="flex-1 py-3 px-4 bg-gradient-to-r from-[#7A0019] to-[#0038A8] text-white rounded-xl hover:opacity-90 transition font-semibold text-sm shadow-md"
+                  className="flex-1 py-3 px-4 bg-gradient-to-r from-[#1B5E20] to-[#2E7D32] text-white rounded-xl hover:opacity-90 transition font-semibold text-sm shadow-md"
                 >
                   Yes, Logout
                 </button>

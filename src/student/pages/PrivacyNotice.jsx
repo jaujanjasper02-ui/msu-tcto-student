@@ -15,6 +15,7 @@ import {
   Bell,
   Clock
 } from "lucide-react";
+import { SCHOOL, OFFICE } from "../../config/trac.config";
 
 export default function PrivacyNotice() {
   const [openIndex, setOpenIndex] = useState(null);
@@ -26,17 +27,17 @@ export default function PrivacyNotice() {
       content: (
         <div>
           <p className="mb-4 text-gray-700">
-            The MSU-TCTO Request System is a "Registrar Queuing System with Notifications" designed to enable Students/Alumni to submit document requests, track their status in the digital queue, and receive real-time updates via email. This Privacy Notice explains how we handle your personal information in compliance with the Data Privacy Act of 2012 (Republic Act No. 10173).
+            The {SCHOOL.systemName} is a "{SCHOOL.subtitle}" designed to enable Students/Alumni to submit document requests, track their status in the digital queue, and receive real-time updates via email. This Privacy Notice explains how we handle your personal information in compliance with the Data Privacy Act of 2012 (Republic Act No. 10173).
           </p>
           
-          <div className="bg-gradient-to-r from-[#8B0000]/5 to-[#0056A6]/5 p-4 rounded-lg">
+          <div className="bg-gradient-to-r from-[#1B5E20]/5 to-[#F9A825]/5 p-4 rounded-lg border border-green-100">
             <h4 className="font-semibold text-gray-800 mb-2">What Data We Collect:</h4>
             <ul className="list-disc list-inside text-gray-700 space-y-1">
               <li>Student ID number (format: 00-00000)</li>
               <li>Full name (Last, First, Middle)</li>
-              <li>Year level, department, and course</li>
+              <li>Year level, institute, and course (BSIT, BSIS, BSCRIM, BTVTED, BTLED, BSHM, BSHRRM, BSHT, BSA, BSF, BSAB, MAEd, MSA, MSAgEd, MSAg.Mgt.)</li>
               <li><span className="font-semibold">Email address</span> (for email notifications)</li>
-              <li>Document request history and tracking codes</li>
+              <li>Document request history and tracking codes (TOR, COR, COG, GWA, CAV, INC, etc.)</li>
               <li>Queue position and status updates</li>
               <li>Payment records and official receipts</li>
             </ul>
@@ -54,70 +55,37 @@ export default function PrivacyNotice() {
       content: (
         <div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div className="bg-gradient-to-r from-[#8B0000]/10 to-[#0056A6]/10 p-4 rounded-lg">
+            <div className="bg-gradient-to-r from-[#1B5E20]/10 to-[#2E7D32]/10 p-4 rounded-lg border border-green-100">
               <h4 className="font-semibold text-gray-800 mb-2">Queue Management</h4>
               <ul className="space-y-2 text-sm text-gray-700">
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  Assign queue numbers and track position
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  Process document requests in FIFO order
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  Update request status (Pending, Processing, Ready, Claimed, Rejected)
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  Calculate processing times based on document type
-                </li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-[#1B5E20]" />Assign queue numbers and track position</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-[#1B5E20]" />Process document requests in FIFO order (first-come, first-served)</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-[#1B5E20]" />Update request status (Pending, Processing, Ready, Claimed, Rejected)</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-[#1B5E20]" />Calculate processing times based on document type</li>
               </ul>
             </div>
-            <div className="bg-gradient-to-r from-[#8B0000]/10 to-[#0056A6]/10 p-4 rounded-lg">
+            <div className="bg-gradient-to-r from-[#F9A825]/10 to-[#F57F17]/10 p-4 rounded-lg border border-amber-100">
               <h4 className="font-semibold text-gray-800 mb-2">Email Notification System</h4>
               <ul className="space-y-2 text-sm text-gray-700">
-                <li className="flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-blue-600" />
-                  <span className="font-medium">Email Alerts:</span> Real-time queue and status updates
-                </li>
-                <li className="flex items-center gap-2">
-                  <Bell className="w-4 h-4 text-blue-600" />
-                  <span className="font-medium">Status Notifications:</span> Detailed status changes via email
-                </li>
+                <li className="flex items-center gap-2"><Mail className="w-4 h-4 text-[#F57F17]" /><span className="font-medium">Email Alerts:</span> Real-time queue and status updates</li>
+                <li className="flex items-center gap-2"><Bell className="w-4 h-4 text-[#F57F17]" /><span className="font-medium">Status Notifications:</span> Detailed status changes via email</li>
               </ul>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-gradient-to-r from-[#8B0000]/10 to-[#0056A6]/10 p-4 rounded-lg">
-              <h4 className="font-semibold text-gray-800 mb-2">Document Processing</h4>
+            <div className="bg-gradient-to-r from-[#1B5E20]/10 to-[#F9A825]/10 p-4 rounded-lg border border-green-100">
+              <h4 className="font-semibold text-gray-800 mb-2">Document Processing - TRAC</h4>
               <ul className="space-y-2 text-sm text-gray-700">
-                <li className="flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-purple-600" />
-                  TOR, CAV, Certifications, and other academic records
-                </li>
-                <li className="flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-purple-600" />
-                  Forms: INC, Clearance, Graduation, Advanced Credits
-                </li>
-                <li className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-purple-600" />
-                  Track estimated completion dates
-                </li>
+                <li className="flex items-center gap-2"><FileText className="w-4 h-4 text-[#1B5E20]" />TOR ₱100/page, COR ₱20, COG ₱20, GWA ₱70, CAV ₱50</li>
+                <li className="flex items-center gap-2"><FileText className="w-4 h-4 text-[#1B5E20]" />Forms: INC ₱15/subject, Shifting, Adding, Honorable Dismissal ₱50</li>
+                <li className="flex items-center gap-2"><Clock className="w-4 h-4 text-[#1B5E20]" />Track estimated completion dates</li>
               </ul>
             </div>
-            <div className="bg-gradient-to-r from-[#8B0000]/10 to-[#0056A6]/10 p-4 rounded-lg">
+            <div className="bg-gradient-to-r from-[#1B5E20]/10 to-[#2E7D32]/10 p-4 rounded-lg border border-green-100">
               <h4 className="font-semibold text-gray-800 mb-2">Payment Processing</h4>
               <ul className="space-y-2 text-sm text-gray-700">
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  Record payment status and official receipts
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  Calculate fees based on document type and copies
-                </li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-[#1B5E20]" />Record payment status and official receipts</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-[#1B5E20]" />Calculate fees based on document type and copies (TRAC fee table)</li>
               </ul>
             </div>
           </div>
@@ -130,50 +98,23 @@ export default function PrivacyNotice() {
       content: (
         <div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div className="bg-gradient-to-r from-[#8B0000]/10 to-[#0056A6]/10 p-4 rounded-lg">
+            <div className="bg-gradient-to-r from-[#1B5E20]/10 to-[#2E7D32]/10 p-4 rounded-lg border border-green-100">
               <h4 className="font-semibold text-gray-800 mb-2">Security Measures</h4>
               <ul className="space-y-2 text-sm text-gray-700">
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  Secure servers with restricted access
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  Encrypted data transmission (SSL/TLS)
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  Password hashing for account security
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  Role-based access control (Students vs Staff)
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  Regular security updates and audits
-                </li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-[#1B5E20]" />Secure servers with restricted access</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-[#1B5E20]" />Encrypted data transmission (SSL/TLS)</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-[#1B5E20]" />Password hashing for account security</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-[#1B5E20]" />Role-based access control (Students vs Staff)</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-[#1B5E20]" />Regular security updates and audits</li>
               </ul>
             </div>
-            <div className="bg-gradient-to-r from-[#8B0000]/10 to-[#0056A6]/10 p-4 rounded-lg">
+            <div className="bg-gradient-to-r from-[#F9A825]/10 to-[#F57F17]/10 p-4 rounded-lg border border-amber-100">
               <h4 className="font-semibold text-gray-800 mb-2">Data Retention</h4>
               <ul className="space-y-2 text-sm text-gray-700">
-                <li className="flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-yellow-600" />
-                  Active requests: Until completion + 30 days
-                </li>
-                <li className="flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-yellow-600" />
-                  Request history: As required by university policy
-                </li>
-                <li className="flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-yellow-600" />
-                  Email logs: 1 year for audit purposes
-                </li>
-                <li className="flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-yellow-600" />
-                  Inactive accounts: 2 years before purging
-                </li>
+                <li className="flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-amber-600" />Active requests: Until completion + 30 days</li>
+                <li className="flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-amber-600" />Request history: As required by university policy</li>
+                <li className="flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-amber-600" />Email logs: 1 year for audit purposes</li>
+                <li className="flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-amber-600" />Inactive accounts: 2 years before purging</li>
               </ul>
             </div>
           </div>
@@ -199,7 +140,7 @@ export default function PrivacyNotice() {
               { right: "Right to Data Portability", desc: "Receive your data in electronic format" },
               { right: "Right to Complain", desc: "File complaints with National Privacy Commission" },
             ].map((item, index) => (
-              <div key={index} className="bg-gradient-to-r from-[#8B0000]/5 to-[#0056A6]/5 p-3 rounded-lg hover:from-[#8B0000]/10 hover:to-[#0056A6]/10 transition-all">
+              <div key={index} className="bg-gradient-to-r from-[#1B5E20]/5 to-[#F9A825]/5 p-3 rounded-lg hover:from-[#1B5E20]/10 hover:to-[#F9A825]/10 transition-all border border-green-50">
                 <div className="font-medium text-gray-800">{item.right}</div>
                 <div className="text-sm text-gray-600">{item.desc}</div>
               </div>
@@ -218,27 +159,25 @@ export default function PrivacyNotice() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-10 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-[#F1F8E9]/30 to-white py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         
-        {/* Header */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-[#8B0000] to-[#0056A6] rounded-full mb-4 shadow-lg">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-[#1B5E20] to-[#2E7D32] rounded-full mb-4 shadow-lg">
             <Shield className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-[#8B0000] to-[#0056A6] bg-clip-text text-transparent mb-3">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-[#1B5E20] to-[#F9A825] bg-clip-text text-transparent mb-3">
             Privacy Notice
           </h1>
-          <p className="text-gray-600 text-lg">MSU-TCTO Registrar Queuing System with Notifications</p>
+          <p className="text-gray-600 text-lg">{SCHOOL.fullName} - {SCHOOL.subtitle}</p>
         </div>
 
-        {/* Privacy Sections */}
         <div className="space-y-6">
           {privacySections.map((section, index) => (
-            <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-green-50">
               <button
                 onClick={() => toggleSection(index)}
-                className="w-full bg-gradient-to-r from-[#8B0000] to-[#0056A6] text-white p-5 flex justify-between items-center hover:opacity-95 transition-opacity"
+                className="w-full bg-gradient-to-r from-[#1B5E20] to-[#2E7D32] text-white p-5 flex justify-between items-center hover:opacity-95 transition-opacity"
                 aria-expanded={openIndex === index}
               >
                 <div className="flex items-center gap-4">
@@ -258,7 +197,7 @@ export default function PrivacyNotice() {
               
               {openIndex === index && (
                 <div className="p-6">
-                  <div className="border-l-4 border-[#8B0000] pl-4">
+                  <div className="border-l-4 border-[#1B5E20] pl-4">
                     {section.content}
                   </div>
                 </div>
@@ -267,10 +206,9 @@ export default function PrivacyNotice() {
           ))}
         </div>
 
-        {/* Contact Information */}
-        <div className="mt-12 bg-gradient-to-r from-[#8B0000] to-[#0056A6] rounded-xl shadow-lg overflow-hidden">
+        <div className="mt-12 bg-gradient-to-r from-[#1B5E20] to-[#2E7D32] rounded-xl shadow-lg overflow-hidden">
           <div className="p-8 text-white">
-            <h3 className="text-2xl font-bold mb-6">Contact for Privacy Concerns</h3>
+            <h3 className="text-2xl font-bold mb-6">Contact for Privacy Concerns - {SCHOOL.shortName}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
@@ -279,9 +217,7 @@ export default function PrivacyNotice() {
                   </div>
                   <div>
                     <p className="font-semibold text-lg">Phone Number</p>
-                    <p className="text-white/80 mt-2">
-                      (068) 268-4231
-                    </p>
+                    <p className="text-white/80 mt-2">{SCHOOL.contact.phone}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -292,8 +228,8 @@ export default function PrivacyNotice() {
                     <p className="font-semibold text-lg">Office Location</p>
                     <p className="text-white/80 mt-2">
                       Office of the Campus Registrar<br/>
-                      MSU-TCTO, Sanga-Sanga<br/>
-                      Bongao, Tawi-Tawi 7500
+                      {SCHOOL.fullName}<br/>
+                      {SCHOOL.footer.location} 7500
                     </p>
                   </div>
                 </div>
@@ -305,9 +241,7 @@ export default function PrivacyNotice() {
                   </div>
                   <div>
                     <p className="font-semibold text-lg">Email Address</p>
-                    <p className="text-white/80 mt-2">
-                      registrar@msutcto.edu.ph
-                    </p>
+                    <p className="text-white/80 mt-2">{SCHOOL.contact.email}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -317,7 +251,7 @@ export default function PrivacyNotice() {
                   <div>
                     <p className="font-semibold text-lg">Data Privacy Officer</p>
                     <p className="text-white/80 mt-2">
-                      MSU-TCTO Data Protection Office<br/>
+                      {SCHOOL.shortName} Data Protection Office<br/>
                       Office of the Campus Registrar
                     </p>
                   </div>
@@ -326,17 +260,16 @@ export default function PrivacyNotice() {
             </div>
             <div className="mt-6 pt-6 border-t border-white/20 text-center">
               <p className="text-white/80 text-sm">
-                For data privacy concerns or to exercise your rights under RA 10173, contact our Data Privacy Officer.
+                For data privacy concerns or to exercise your rights under RA 10173, contact our Data Privacy Officer.<br/>
+                Office Hours: {OFFICE.schedule.full} - {OFFICE.schedule.closedNote}
               </p>
             </div>
           </div>
         </div>
 
-        {/* Footer */}
         <div className="mt-8 text-center">
-          <p className="text-gray-500 text-sm">
-            MSU-TCTO Registrar Queuing System with Notifications
-          </p>
+          <p className="text-gray-500 text-sm">{SCHOOL.systemName} - {SCHOOL.subtitle}</p>
+          <p className="text-xs text-gray-400 mt-1">{SCHOOL.fullName} • Programs: ICS, ISCJS, IVTES, IAS, GS</p>
         </div>
       </div>
     </div>

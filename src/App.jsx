@@ -11,7 +11,7 @@ import TrackStatus from "./student/pages/TrackStatus";
 import RequestSubmitted from "./student/pages/RequestSubmitted";
 import Profile from "./student/pages/Profile";
 
-// New Pages
+// Info Pages
 import PrivacyNotice from "./student/pages/PrivacyNotice";
 import NeedHelp from "./student/pages/NeedHelp";
 import FAQ from "./student/pages/FAQ";
@@ -24,7 +24,7 @@ export default function App() {
   const showStudentNavbar = !isAdminRoute && !isStudentAuth && location.pathname !== "/";
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#F1F8E9]/20">
       {showStudentNavbar && <Navbar />}
 
       <Routes>
