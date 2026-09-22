@@ -38,18 +38,7 @@ export default function LandingPage() {
         </p>
       </div>
 
-      {/* Institutes Quick Preview */}
-      <div className="max-w-2xl w-full mb-6 bg-white/60 backdrop-blur rounded-xl p-4 border border-green-100 shadow-sm">
-        <p className="text-xs text-center text-gray-500 uppercase tracking-widest font-bold mb-2">Academic Institutes</p>
-        <div className="flex flex-wrap justify-center gap-2">
-          <span className="px-3 py-1 bg-[#1B5E20]/10 text-[#1B5E20] rounded-full text-xs font-semibold">ICS</span>
-          <span className="px-3 py-1 bg-[#1B5E20]/10 text-[#1B5E20] rounded-full text-xs font-semibold">ISCJS</span>
-          <span className="px-3 py-1 bg-[#1B5E20]/10 text-[#1B5E20] rounded-full text-xs font-semibold">IVTES</span>
-          <span className="px-3 py-1 bg-[#2E7D32]/10 text-[#2E7D32] rounded-full text-xs font-semibold">IAS</span>
-          <span className="px-3 py-1 bg-[#F9A825]/20 text-[#5D4037] rounded-full text-xs font-semibold">Graduate Studies</span>
-        </div>
-      </div>
-
+     
       {/* Get Started Button */}
       <button
         onClick={() => navigate("/login")}
